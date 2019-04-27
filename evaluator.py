@@ -45,4 +45,5 @@ class Evaluator():
             self.snr.append(calculateSNR(normalized_amplitude,bpm_id))
             self.curbpm = self.f[bpm_id]
             self.cursnr = self.snr[-1]  
+            
 

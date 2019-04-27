@@ -6,7 +6,7 @@ import json
 import csv
 
 inputDataPath = "input.json"
-
+flatten = lambda l: [item for sublist in l for item in sublist]
 
 class UIElement:
     def __init__(self,fieldname,classname,uiname,onupdate,myclass):   
@@ -41,7 +41,23 @@ class Slider(UIElement):
     
     def updateValue(self,value):
         self.myclass.__dict__[self.fieldname] = float(value)
-
+        
+class Button():
+    def __init__(self,classname,uiname,myclass,onclick):
+        self.uiname = uiname
+        self.onclick = onclick
+        self.classname = classname
+        self.myclass = myclass
+        
+    def performUpdate(self):
+        if self.onclick!=None:
+           getattr(self.myclass, self.onclick)()
+    def getInstructions(self):
+        return ["button",self.classname,self.uiname]
+    
+    def updateValue(self,value):
+        pass
+    
 class Dropdown(UIElement):
     def __init__(self,fieldname,classname,uiname,myclass,options,optionlabels,onupdate):
         UIElement.__init__(self,fieldname,classname,uiname,onupdate,myclass)
@@ -64,7 +80,7 @@ class Dropdown(UIElement):
         self.myclass.__dict__[self.fieldname] = self.options[self.optionlabels.index(label)]
    
 
-class TimeFigure():
+class AddingFigure():
     def updateValues(self):
         self.t += 0.01
         self.y = [self.myclass.__dict__[yFieldName] for yFieldName in self.yfieldnames]
@@ -85,6 +101,29 @@ class TimeFigure():
         self.updateValues()
         return [1,len(self.y), self.t] + self.y
 
+
+class ReplacingFigure():
+    def updateValues(self):
+        self.x = self.myclass.__dict__[self.xfieldname]
+        self.y = [self.myclass.__dict__[yFieldName] for yFieldName in self.yfieldnames]
+
+    def __init__(self,myclass,xfieldName,yFieldNames,xname,ynames):
+        self.xfieldname = xfieldName
+        self.yfieldnames = yFieldNames
+        self.xname = xname
+        self.myclass = myclass      
+        self.ynames= ynames
+        self.updatePol = "Replace"
+        self.updateValues()
+        
+    def getInstructions(self):
+        yflat =flatten(self.y)
+        print(yflat)
+        return ["figure",len(self.x),len(self.y),self.updatePol,self.xname] + self.ynames + list(self.x) + yflat
+
+    def getUpdateInstructions(self):
+        self.updateValues()
+        return [len(self.x),len(self.y)] + list(self.x) + flatten(self.y)
 
 
 

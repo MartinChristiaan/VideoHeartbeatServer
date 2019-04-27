@@ -26,7 +26,11 @@ class PPGSensor():
         self.cap = framecapture     
     def sense_ppg(self,frame,numpixels):
         pass   
-     
+    def reset(self,framecapture:FrameCapture):
+        self.rppgl = []
+        self.rppg = np.array([])
+        self.cap = framecapture
+        
 
 class SimplePPGSensor(PPGSensor):
     def sense_ppg(self,frame,num_pixels):
@@ -40,7 +44,7 @@ class SimplePPGSensor(PPGSensor):
         self.rppgl.append(ppg)
         # if len(self.rppgl)>300:
         #     del self.rppgl[0]
-        rppg = np.transpose(np.array(self.rppgl[-300:]))
+        rppg = np.transpose(np.array(self.rppgl))
         self.rppg = self.cap.resample(rppg)
         
 

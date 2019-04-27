@@ -45,11 +45,17 @@ class WebcamCapture(FrameCapture):
     def resample(self,rPPG):
         if len(self.timestamps) == 0:
             self.timestamps.append(self.fs)
-        t = np.arange(0,self.timestamps[-1],1/self.fs)
+        t = np.arange(self.timestamps[0],self.timestamps[-1],1/self.fs)
             
         rPPG_resampled= np.zeros((3,t.shape[0]))
+        #print(rPPG.shape)
+        #print(t.shape)
+        #print(len(self.timestamps))
         for col in [0,1,2]:
             rPPG_resampled[col] = np.interp(t,self.timestamps,rPPG[col])
+        
+        print(rPPG_resampled.shape)
+        
         return rPPG_resampled
         
 
@@ -65,15 +71,20 @@ class MixedMotion(FrameCapture):
         curpath = self.next_path
         self.next_path = self.video_folder + str(self.frame) + ".bmp"
         exists = os.path.isfile(self.next_path)
-        print(exists)
+        
         if exists:
-            frame = cv2.imread(curpath)       
+            frame = cv2.imread(curpath)
+
+            #write_text(frame,"Frame : " + str(self.frame))
             return frame       
         else:
-            frame = cv2.imread(curpath)           
+            frame = cv2.imread(curpath)
+            print(frame.shape)
+            #write_text(frame,"Frame : " + str(self.frame))
+            print("Restart")
             self.frame = 1
+            self.next_path = self.video_folder + str(self.frame) + ".bmp"
             return frame
-
 class Stationary(FrameCapture):    
     def __init__(self,frame):
         self.fs = 20
@@ -109,7 +120,7 @@ class Fitness(FrameCapture):
         self.vi_cap = cv2.VideoCapture("C:\\Users\\marti\\Downloads\\Data\\me\\Talking.mp4")
         _,self.nextframe = self.vi_cap.read()
         self.fs =  self.vi_cap.get(cv2.CAP_PROP_FPS)
-        print("FPS : " + str(self.fs) )
+       
     #settings.use_resampling = True
     def get_frame(self):
         frame = self.nextframe
