@@ -30,8 +30,7 @@ def track_eyes(frame):
                         return True
 
     return False
-
-        
+      
        
 
 

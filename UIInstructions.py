@@ -123,18 +123,9 @@ class ReplacingFigure():
 
     def getUpdateInstructions(self):
         self.updateValues()
+        # A way to also update x may need to be added in the future.
         return [len(self.x),len(self.y)] + list(self.x) + flatten(self.y)
 
-
-
-# uiInstructions = {"SkinClassifier": [
-#             Slider("minh","Min Hue",0,255,0).__dict__,
-#             Slider("maxh","Max Hue",0,255,20).__dict__    
-#             ],
-#             "Camera":[
-#             Dropdown("resolution","Resolution",["360p","480p","720p","1080p"]).__dict__    
-#             ]    
-#     }
 
 
 

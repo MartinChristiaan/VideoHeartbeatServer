@@ -1,4 +1,4 @@
-from signalprocessor import Proccessor
+
 from TextWriter import write_text
 import numpy as np
 
@@ -24,26 +24,18 @@ def calculateSNR(hwfft, f, nsig=1):
     return snr
 
 class Evaluator():
-    def __init__(self,processor:Proccessor):
-        self.processor = processor
-        self.write_on_frame = True
-        self.f = np.linspace(0,processor.fs/2,processor.fftlength/2 + 1) * 60
-        self.bpm = []
-        self.snr = []
+    def __init__(self,fs,fftlength=300):
         self.curbpm = 0
         self.cursnr = 0
-     
-    def evaluate(self,frame):
-        if self.processor.enough_samples:
-            normalized_amplitude = self.processor.normalized_amplitude
+        self.f = np.linspace(0,fs/2,fftlength/2 + 1) * 60
+        self.normalized_amplitude = np.zeros_like(self.f)
+        
+    def evaluate(self,fs,normalized_amplitude,fftlength = 300):
+        self.f = np.linspace(0,fs/2,fftlength/2 + 1) * 60
+        if len(normalized_amplitude) > 0:
+            self.normalized_amplitude = normalized_amplitude
             bpm_id = np.argmax(normalized_amplitude)
-            self.bpm.append(self.f[bpm_id])
-
-            
-            if len(self.bpm) > 300:
-                del self.bpm[0]
-            self.snr.append(calculateSNR(normalized_amplitude,bpm_id))
             self.curbpm = self.f[bpm_id]
-            self.cursnr = self.snr[-1]  
+            self.cursnr = calculateSNR(normalized_amplitude,bpm_id)
             
 
