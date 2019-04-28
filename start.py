@@ -37,6 +37,7 @@ class Main:
 
     def main(self):
         frame = self.frameCapture.get_frame()
+        
         fs = self.frameCapture.fs
         face = []
         face = self.faceTracker.crop_to_face(frame)
@@ -49,7 +50,7 @@ class Main:
         else:
             normalized_amplitude = extract_pulse_PBV(self.frameCapture.fs,self.sensor.rppg)
                 
-        self.evaluator.evaluate(self,fs,normalized_amplitude)
+        self.evaluator.evaluate(fs,normalized_amplitude)
         self.fps = 1/(time.time() - self.tprev)
         self.tprev = time.time()
 
@@ -88,7 +89,7 @@ uiInstructions = [
             Dropdown("display","VideoSettings","Video Output",main,[0,1,2],["Source","Face","Face without Skin"],None),
                       
             Button("VideoSettings","Reset Measurements",main,"resetMeasurement"),
-            Dropdown("detectionMethod","Pulse Detection","DetectionMethod",main,[0,1],["Chrominance","PBV"],"setProcessor")
+            Dropdown("detectionMethod","Pulse Detection","DetectionMethod",main,[0,1],["Chrominance","PBV"],None)
             # Dropdown("selectedCamera","VideoSettings","Selected Camera",main,[1,0],["1","0"],"setCameraUpdate")    
             
                             

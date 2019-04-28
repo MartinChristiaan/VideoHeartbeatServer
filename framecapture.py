@@ -136,4 +136,10 @@ class Fitness(FrameCapture):
         #M = cv2.getRotationMatrix2D((cols/2,rows/2),270,1)
         #frame = cv2.warpAffine(frame,M,(cols,rows))
 #        frame = cv2.resize(frame,None,fx=0.5, fy=0.5, interpolation = cv2.INTER_CUBIC)
-        
+
+
+#camera = cv2.VideoCapture(1)
+#        
+#_,frame = camera.read()
+#cv2.imshow("test",frame)
+#cv2.waitKey()
