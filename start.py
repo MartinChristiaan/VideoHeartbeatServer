@@ -26,7 +26,7 @@ class Main:
         self.evaluator = Evaluator(self.frameCapture.fs)
         self.fps =  0
         self.tprev = 0
-        self.display = 2
+        self.display = "Source"
         self.detectionMethod = 0
 
     def resetMeasurement(self):
@@ -65,40 +65,9 @@ main = Main()
 #serialization.LoadFromJson(main.SkinClassifier)
 video_capture.main = main
 
-uiInstructions = [
-            Slider("maxh","SkinClassifier","Max Hue",0,255,main.SkinClassifier,None),
-            Slider("minh","SkinClassifier","Min Hue",0,255,main.SkinClassifier,None),
-            Slider("mins","SkinClassifier","Min Saturation",0,255,main.SkinClassifier,None),
-            Slider("maxs","SkinClassifier","Max Saturation",0,255,main.SkinClassifier,None),
-            Slider("minv","SkinClassifier","Min Value",0,255,main.SkinClassifier,None),
-            Slider("maxv","SkinClassifier","Max Value",0,255,main.SkinClassifier,None),         
-            Slider("elipse_size","SkinClassifier","Elipse Size",0,20,main.SkinClassifier,None),
-            Slider("blursize","SkinClassifier","Blur Size",0,50,main.SkinClassifier,None), 
-            Switch("enabled","SkinClassifier","Enabled",main.SkinClassifier,None), 
-            
-            AddingFigure(main,"t",["fps"],"t",["fps"]),
-            AddingFigure(main.evaluator,"t",["curbpm"],"t",["curbpm"]), 
-            AddingFigure(main.evaluator,"t",["cursnr"],"t",["cursnr"]),
-            ReplacingFigure(main.evaluator,"f",["normalized_amplitude"],"frequency",["Normalized Amplitude"]),
-            Button("Face Tracker","Reset Tracker",main.faceTracker,"resetTracker"),
-            Switch("enabled","Face Tracker","Enabled",main.faceTracker,None), 
-            
-            
-            Dropdown("frameCapture","VideoSettings","Video Input",main,[Stationary(1),MixedMotion(1),WebcamCapture()],["Stationary","Mixed Motion","Webcam"],"resetMeasurement"),
-           
-            Dropdown("display","VideoSettings","Video Output",main,[0,1,2],["Source","Face","Face without Skin"],None),
-                      
-            Button("VideoSettings","Reset Measurements",main,"resetMeasurement"),
-            Dropdown("detectionMethod","Pulse Detection","DetectionMethod",main,[0,1],["Chrominance","PBV"],None)
-            # Dropdown("selectedCamera","VideoSettings","Selected Camera",main,[1,0],["1","0"],"setCameraUpdate")    
-            
-                            
-            
-            
-            ]
             #host="0.0.0.0"
 
 if __name__ == '__main__':
-    app = create_server(uiInstructions,lambda : video_capture.Camera())
+    app = create_server([main,main.SkinClassifier],lambda : video_capture.Camera())
     app.run(threaded = True)
 
