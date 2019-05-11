@@ -68,6 +68,6 @@ video_capture.main = main
             #host="0.0.0.0"
 
 if __name__ == '__main__':
-    app = create_server([main,main.SkinClassifier],lambda : video_capture.Camera())
+    app = create_server([main,main.SkinClassifier,main.evaluator],lambda : video_capture.Camera())
     app.run(threaded = True)
 
