@@ -9,19 +9,36 @@ from flask_cors import CORS
 import math
 import serialization
 import numpy as np
+import types
+from enum import Enum
+
 pathToPython = "C:\\Users\\marti\\Source\\Repos\\VideoHeartbeatInterface\\src\\pythonTypes.fs"
 
 def create_type_provider(classlibrary):
     lines = ["module PythonTypes \n"]
     lines +=["type ClassName = string \n"]
     lines +=["type FieldName = string \n"]
+    lines +=["type EnumName = FieldName \n"]
+    lines +=["type EnumOptions = string list \n"]
+    lines +=["type MethodName = FieldName \n"]
+    
+    
            
     
     for c in classlibrary:
         classname = type(c).__name__
         for field in dir(c):
-            lines+=["let " + classname + "_"+ str(field) + " : ClassName*FieldName = \"" + classname+"\",\"" + str(field)+"\" \n"]
-    
+            attr = getattr(c,field)
+            if type(attr)== types.MethodType:
+               lines+=["let " + classname + "_"+ str(field) + " : ClassName*MethodName = \"" + classname+"\",\"" + str(field)+"\" \n"]
+            elif isinstance(attr, Enum):
+                choices = "\";\"".join(dir(type(attr))[:-4])
+                print(choices)
+                lines+=["let " + classname + "_"+ str(field) + " : ClassName*EnumName = \"" + classname+"\",\"" + str(field)+"\" \n"]
+                lines+=["let " + classname + "_"+ str(field) + "_options  : EnumOptions = [\"" + choices + "\"] \n"]
+                
+            else:
+                 lines+=["let " + classname + "_"+ str(field) + " : ClassName*FieldName = \"" + classname+"\",\"" + str(field)+"\" \n"]
     f = open(pathToPython,"w")
     f.writelines(lines)
 
@@ -72,8 +89,10 @@ def create_server(classlibrary,createCamera):
             classlookup[classname].__dict__[fieldname] = not value
         if valuetype == "string":
             classlookup[classname].__dict__[fieldname] = value
-            print(value)
-        
+        if valuetype == "enum":
+            enum = classlookup[classname].__dict__[fieldname]
+            classlookup[classname].__dict__[fieldname] = type(enum)[value]  
+          
         return ""
     
     @app.route('/invokeMethod',methods=['PUT'])

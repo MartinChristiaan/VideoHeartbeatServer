@@ -53,9 +53,10 @@ class SimplePPGSensor(PPGSensor):
 class SimpleForeheadSensor(PPGSensor):
     def sense_ppg(self,frame,bp):
 
-        sub_roi_rect = get_subroi_rect(frame,[.35,.70,.08,.23])
-        draw_rect(frame,sub_roi_rect)
+        sub_roi_rect = get_subroi_rect(frame,[.45,.25,.08,.10]) #[.35,.70,.08,.23]
+        
         forehead = crop_frame(frame,sub_roi_rect)
+        draw_rect(frame,sub_roi_rect)
         num_pixels = forehead.shape[0] * forehead.shape[1]
         r_avg = np.sum(forehead[:,:,0])/num_pixels
         g_avg = np.sum(forehead[:,:,1])/num_pixels
@@ -67,7 +68,7 @@ class SimpleForeheadSensor(PPGSensor):
         self.rppgl.append(ppg)
         # if len(self.rppgl)>300:
         #     del self.rppgl[0]
-        rppg = np.transpose(np.array(self.rppgl[-300:]))
+        rppg = np.transpose(np.array(self.rppgl))
         self.rppg = self.cap.resample(rppg)
         
 
@@ -96,9 +97,10 @@ class RegionSensor(PPGSensor):
         b = []
         for region in regions:
             #print(region)
-            region = get_subroi_rect(frame,region)
-            draw_rect(frame,region)
-            region = crop_frame(frame,region)
+            regionr = get_subroi_rect(frame,region)
+            
+            region = crop_frame(frame,regionr)
+            draw_rect(frame,(regionr))
             r.append(np.sum(region[:,:,0]))
             g.append(np.sum(region[:,:,1]))
             b.append(np.sum(region[:,:,2]))
@@ -115,7 +117,7 @@ class RegionSensor(PPGSensor):
         self.rppgl.append(ppg)
         # if len(self.rppgl)>300:
         #     del self.rppgl[0]
-        rppg = np.transpose(np.array(self.rppgl[-300:]))
+        rppg = np.transpose(np.array(self.rppgl))
         self.rppg = self.cap.resample(rppg)
         
 

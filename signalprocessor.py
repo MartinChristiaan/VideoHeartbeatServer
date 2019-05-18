@@ -14,10 +14,7 @@ B = 2
 def extract_pulse_chrominance(fs,rPPG,fftlength = 300):
     
  
-    if(rPPG.shape[1] <= fftlength):
-        return []
-    else:
-
+  
         fft_roi = range(int(fftlength/2+1)) # We only care about this part of the fft because it is symmetric anyway
         bpf_div= 60 * fs / 2
         b_BPF40220,a_BPF40220 = signal.butter(10, ([40/bpf_div, 220/bpf_div]),  'bandpass') 
@@ -41,9 +38,6 @@ def extract_pulse_chrominance(fs,rPPG,fftlength = 300):
 
 def extract_pulse_PBV(fs,rPPG,fftlength = 300):
         
-        if(rPPG.shape[1] < fftlength):
-            return []
-        else:
             
             pbv = np.array([0.307737615161693,0.436069490554354,0.236745815212185])    
             fft_roi = range(int(fftlength/2+1)) # We only care about this part of the fft because it is symmetric anyway
