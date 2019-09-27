@@ -12,7 +12,7 @@ import numpy as np
 import types
 from enum import Enum
 
-pathToPython = "C:\\Users\\marti\\Source\\Repos\\VideoHeartbeatInterface\\src\\pythonTypes.fs"
+pathToPython = "/home/martin/repos/AudioAnalysisClient/src/pythonTypes.fs"
 
 def create_type_provider(classlibrary):
     lines = ["module PythonTypes \n"]
@@ -21,8 +21,6 @@ def create_type_provider(classlibrary):
     lines +=["type EnumName = FieldName \n"]
     lines +=["type EnumOptions = string list \n"]
     lines +=["type MethodName = FieldName \n"]
-    
-    
            
     
     for c in classlibrary:
@@ -42,7 +40,7 @@ def create_type_provider(classlibrary):
     f = open(pathToPython,"w")
     f.writelines(lines)
 
-def create_server(classlibrary,createCamera):
+def create_server(classlibrary):
     """Receives list of uiElements that handle interaction with their specified classes"""
     app = Flask(__name__)
     CORS(app)
@@ -50,8 +48,6 @@ def create_server(classlibrary,createCamera):
     classnames = [type(c).__name__ for c in classlibrary]
     classlookup = dict(zip(classnames, classlibrary))
     create_type_provider(classlibrary)
-    
-    
     
     print(classlookup)
     @app.route("/")
@@ -81,7 +77,7 @@ def create_server(classlibrary,createCamera):
         fieldname = request.form['fieldname']
         valuetype = request.form['valuetype']
         value = request.form['value']
-        
+        print(value)
         if valuetype == "float":
             classlookup[classname].__dict__[fieldname] = float(value)
         if valuetype == "bool":
@@ -102,17 +98,7 @@ def create_server(classlibrary,createCamera):
         getattr(classlookup[classname], method)()
         return ""
  
-    def gen(camera):
-        while True:
-            frame = camera.get_frame()
-            yield (b'--frame\r\n'
-                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
-
-    @app.route('/video_feed')
-    def video_feed():
-        return Response(gen(createCamera()),
-                        mimetype='multipart/x-mixed-replace; boundary=frame')
    
     return app
 
